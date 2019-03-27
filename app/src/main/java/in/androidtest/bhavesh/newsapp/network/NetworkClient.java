@@ -35,12 +35,12 @@ public class NetworkClient {
         Cache cache = new Cache(httpCacheDirectory, 20 * 1024 * 1024);
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                // .addInterceptor(provideHttpLoggingInterceptor()) // For HTTP request & Response data logging
                 .addInterceptor(offlineInterceptor)
                 .addNetworkInterceptor(onlineInterceptor)
                 .cache(cache)
                 .build();
 
+        //----------------------------------------------------------
         if(retrofit==null) {
 
              retrofit = new Retrofit.Builder()
@@ -49,14 +49,6 @@ public class NetworkClient {
                      .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                      .client(okHttpClient)
                      .build();
-
-                   /* .baseUrl("https://newsapi.org/v2/")
-                     .client(httpClient)
-                     .addConverterFactory(GsonConverterFactory.create(new Gson()))
-
-                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .build();*/
-
         }
 
         return retrofit;
@@ -99,66 +91,4 @@ public class NetworkClient {
         }
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
-
-
- /*   private static Interceptor provideCacheInterceptor() {
-
-        return new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                Response originalResponse = chain.proceed(request);
-                String cacheControl = originalResponse.header("Cache-Control");
-
-                if (cacheControl == null || cacheControl.contains("no-store") || cacheControl.contains("no-cache") ||
-                        cacheControl.contains("must-revalidate") || cacheControl.contains("max-stale=0")) {
-
-
-                    CacheControl cc = new CacheControl.Builder()
-                            .maxStale(1, TimeUnit.DAYS)
-                            .build();
-
-                    *//*return originalResponse.newBuilder()
-                            .header("Cache-Control", "public, max-stale=" + 60 * 60 * 24)
-                            .build();*//*
-
-
-                    request = request.newBuilder()
-                            .cacheControl(cc)
-                            .build();
-
-                    return chain.proceed(request);
-
-                } else {
-                    return originalResponse;
-                }
-            }
-        };
-
-    }
-
-
-    private static Interceptor provideOfflineCacheInterceptor() {
-
-        return new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                try {
-                    return chain.proceed(chain.request());
-                } catch (Exception e) {
-
-
-                    CacheControl cacheControl = new CacheControl.Builder()
-                            .onlyIfCached()
-                            .maxStale(1, TimeUnit.DAYS)
-                            .build();
-
-                    Request offlineRequest = chain.request().newBuilder()
-                            .cacheControl(cacheControl)
-                            .build();
-                    return chain.proceed(offlineRequest);
-                }
-            }
-        };
-    }*/
 }
